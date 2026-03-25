@@ -1,100 +1,138 @@
-//using System.Collections;
-//using UnityEngine;
-//using UnityEngine.UI;
-//public class UIManager : MonoBehaviour
-//{              
-//    [SerializeField] private GameStateManager gameManager;
-//    [SerializeField] private GameObject menuPanel, difficultyPanel, hudPanel, pausePanel, dashboardPanel, analyticsPanel, graphPanel, gameOverPanel, levelCompletedPanel, damagePanel;
-//    [SerializeField] private Button startButton, beginnerBtn, moderateBtn, expertBtn, dashboardNxtBtn, analyticsNxtBtn, graphNxtBtn, gameOverNextBtn, gameOverRestartBtn, levelCompleteNxtBtn, levelCompleteRestartBtn;
-//    [SerializeField] private AudioManager audioManager;
-//    private void Start()
-//    {
-//        if (gameManager == null) gameManager = FindFirstObjectByType<GameStateManager>();
-//        if (startButton) startButton.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowDifficultySelection(); });
-//        if (beginnerBtn) beginnerBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); StartWithDifficulty(0); });
-//        if (moderateBtn) moderateBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); StartWithDifficulty(1); });
-//        if (expertBtn) expertBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); StartWithDifficulty(2); });
-//        if (dashboardNxtBtn) dashboardNxtBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowAnalytics();});
-//        if (analyticsNxtBtn) analyticsNxtBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowGraph(); });
-//        if (graphNxtBtn) graphNxtBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); gameManager.ReturnToIdle(); });
-//        if (gameOverNextBtn) gameOverNextBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); gameManager.SetStateDirectly(GameState.Dashboard); });
-//        if (gameOverRestartBtn) gameOverRestartBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); gameManager.ReturnToIdle(); });
-//        if (levelCompleteNxtBtn) levelCompleteNxtBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); gameManager.SetStateDirectly(GameState.Dashboard); });
-//        if (levelCompleteRestartBtn) levelCompleteRestartBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); gameManager.ReturnToIdle(); });
+using System.Collections;
+using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+public class UIManager : MonoBehaviour
+{
 
-//        if (gameManager != null) gameManager.OnStateChanged += HandleStateChange;
-//    }
-//    private void ShowDifficultySelection()
-//    {
-//        menuPanel?.SetActive(false);
-//        difficultyPanel?.SetActive(true);
-//    }
-//    private void StartWithDifficulty(int index)
-//    {
-//        gameManager?.SetDifficulty(index);
-//        difficultyPanel?.SetActive(false);
-//        gameManager?.StartGame();
-//    }
-//    private void Update()
-//    {
-//        if (gameManager == null) return;
-//        if (Input.GetKeyDown(KeyCode.Escape))
-//        {
-//            if (gameManager.CurrentState == GameState.Paused) gameManager.ResumeGame();
-//            else if (gameManager.IsPlaying) gameManager.PauseGame();
-//        }
-//    }
-//    private void HandleStateChange(GameState state)
-//    {
-//        if (state == GameState.Idle)
-//        {
-//            menuPanel?.SetActive(true);
-//            difficultyPanel?.SetActive(false);
-//            hudPanel?.SetActive(false);
-//            pausePanel?.SetActive(false);
-//            dashboardPanel?.SetActive(false);
-//            analyticsPanel?.SetActive(false);
-//            graphPanel?.SetActive(false);
-//            gameOverPanel?.SetActive(false);
-//            levelCompletedPanel?.SetActive(false);
-//        }
-//        else
-//        {
-//            menuPanel?.SetActive(false);
-//            hudPanel?.SetActive(state == GameState.Running || state == GameState.Combat || state == GameState.Paused);
-//            pausePanel?.SetActive(state == GameState.Paused);
-//            dashboardPanel?.SetActive(state == GameState.Dashboard);
-//            gameOverPanel?.SetActive(state == GameState.GameOver);
-//            levelCompletedPanel?.SetActive(state == GameState.LevelCompleted);
-//        }
-//    }
+    [SerializeField] private GameObject menuPanel, diffSelectPanel, hudPanel, pauseMenu, settingsMenu, leaderboard, analyticsPanel, graphPanel, gameOverPanel, levelCompletedPanel;
+    [SerializeField] private Button startButton, beginnerBtn, moderateBtn, expertBtn, leaderboardNxtBtn, analyticsNxtBtn, graphNxtBtn, gameOverNextBtn, gameOverRestartBtn, levelCompleteNxtBtn, levelCompleteRestartBtn;
+    [SerializeField] private AudioManager audioManager;
+    [SerializeField] private TextMeshProUGUI scoreText;
+
+    public static UIManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        if(Instance != null && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
+    }
+
+    private void Start()
+    {
+        if (startButton) startButton.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowDifficultySelection(); });
+        if (beginnerBtn) beginnerBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowHUD(); });
+        if (moderateBtn) moderateBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowHUD(); });
+        if (expertBtn) expertBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowHUD();});
+        if (leaderboardNxtBtn) leaderboardNxtBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowAnalyticsStats(); });
+        if (analyticsNxtBtn) analyticsNxtBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowAnalyticsGraph(); });
+        if (graphNxtBtn) graphNxtBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowAnalyticsStats(); Restart(); });
+        if (gameOverNextBtn) gameOverNextBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowLeaderboard(); });
+        if (gameOverRestartBtn) gameOverRestartBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); Restart(); });
+        if (levelCompleteNxtBtn) levelCompleteNxtBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowLeaderboard(); });
+        if (levelCompleteRestartBtn) levelCompleteRestartBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); Restart();});
+
+        ShowMenu();
+    }
+
+    public void UpdateScore(float score)
+    {
+        scoreText.text = "Score: " + score;
+    }
+
+    private void HideAll()
+    {
+        menuPanel.SetActive(false);
+        diffSelectPanel.SetActive(false);
+        hudPanel.SetActive(false);
+        pauseMenu.SetActive(false);
+        gameOverPanel.SetActive(false);
+        levelCompletedPanel.SetActive(false);
+        settingsMenu.SetActive(false);
+        leaderboard.SetActive(false);
+        analyticsPanel.SetActive(false);
+        graphPanel.SetActive(false);
+    }
 
 
-//    private void ShowAnalytics()
-//    {
-//        dashboardPanel?.SetActive(false);
-//        analyticsPanel?.SetActive(true);
-//    }
+    public void ShowMenu()
+    {
+        HideAll();
+        menuPanel.SetActive(true);
+    }
 
-//    private void ShowGraph()
-//    {
-//        analyticsPanel?.SetActive(false);
-//        graphPanel?.SetActive(true);
-//    }
+    public void ShowDifficultySelection()
+    {
+        HideAll();
+        diffSelectPanel.SetActive(true);
+    }
+
+    public void ShowHUD()
+    {
+        HideAll();
+        hudPanel.SetActive(true);
+    }
+
+    public void ShowPause()
+    {
+        pauseMenu.SetActive(true);
+    }
+
+    public void HidePause()
+    {
+        pauseMenu.SetActive(false);
+    }
+
+    public void ShowGameOver()
+    {
+        HideAll();
+        gameOverPanel.SetActive(true);
+    }
+
+    public void ShowLevelComplete()
+    {
+        HideAll();
+        levelCompletedPanel.SetActive(true);
+    }
+
+    public void ShowSettings()
+    {
+        settingsMenu.SetActive(true); 
+    }
+
+    public void HideSettings()
+    {
+        settingsMenu.SetActive(false);
+    }
+
+    public void ShowLeaderboard()
+    {
+        HideAll();
+        leaderboard.SetActive(true);
+    }
+
+    public void ShowAnalyticsStats()
+    {
+        HideAll();
+        analyticsPanel.SetActive(true);
+    }
+
+    public void ShowAnalyticsGraph()
+    {
+        HideAll();
+        graphPanel.SetActive(true);
+    }
+
+    public void Restart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+}
 
 
-//    public void ShowDamageBlink()
-//    {
-//        StartCoroutine(BlickRoutine());
-//    }
-
-
-//    public IEnumerator BlickRoutine()
-//    {
-//        damagePanel.SetActive(true);
-//        yield return new WaitForSeconds(0.1f);
-//        damagePanel.SetActive(false);
-//    }
-
-
-//}

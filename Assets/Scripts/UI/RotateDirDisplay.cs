@@ -6,36 +6,25 @@ using UnityEngine;
 public class RotateDirDisplay : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI rotateDirText;
-
+    public enum RotationDir { ClockWise, CounterClockWise};
+    public RotationDir currentDir { get; private set; }
 
     private void Start()
     {
-        ShowRotateDir();
+        AssignNewRandomDir();
     }
 
-    private void Update()
+    public void AssignNewRandomDir()
     {
-        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D))
-        {
-            ShowRotateDir();
-        }
+        int i = Random.Range(0, 2);
+        currentDir = i == 0 ? RotationDir.CounterClockWise : RotationDir.ClockWise;
 
-
-    }
-
-
-
-    public string GetRotateDir()
-    {
-        int index = Random.Range(0, 2);
-        string dir = index == 0 ? "Left" : "Right";
-
-        return dir;
+        UpdateDisplay();
     }
 
 
-    public void ShowRotateDir()
+    public void UpdateDisplay()
     {
-        rotateDirText.text = "Rotate " + GetRotateDir();
+        rotateDirText.text = "Rotate " + currentDir;
     }
 }
