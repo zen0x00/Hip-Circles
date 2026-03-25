@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -8,7 +9,15 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject menuPanel, diffSelectPanel, hudPanel, pauseMenu, settingsMenu, leaderboard, analyticsPanel, graphPanel, gameOverPanel, levelCompletedPanel;
     [SerializeField] private Button startButton, beginnerBtn, moderateBtn, expertBtn, leaderboardNxtBtn, analyticsNxtBtn, graphNxtBtn, gameOverNextBtn, gameOverRestartBtn, levelCompleteNxtBtn, levelCompleteRestartBtn;
     [SerializeField] private AudioManager audioManager;
+    [SerializeField] private TextMeshProUGUI scoreText;
 
+    public static UIManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        if(Instance != null && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
+    }
 
     private void Start()
     {
@@ -27,6 +36,10 @@ public class UIManager : MonoBehaviour
         ShowMenu();
     }
 
+    public void UpdateScore(float score)
+    {
+        scoreText.text = "Score: " + score;
+    }
 
     private void HideAll()
     {

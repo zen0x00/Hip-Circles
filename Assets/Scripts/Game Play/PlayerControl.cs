@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Burst.CompilerServices;
 using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
@@ -10,6 +7,8 @@ public class PlayerControl : MonoBehaviour
     private float animSpeed = 1f;
     private const float MAX_ANIM_SPEED = 5f;
     private const float MIN_ANIM_SPEED = 0f;
+    private const float SCORE_STEP = 0.1f;
+    private float score = 0f;
 
 
     private void Start()
@@ -33,8 +32,11 @@ public class PlayerControl : MonoBehaviour
         bool isCorrectDir = (isPlayerRotatedCW && rotateDirDisplay.currentDir == RotateDirDisplay.RotationDir.ClockWise) ||
             (isPlayerRotatedCCW && rotateDirDisplay.currentDir == RotateDirDisplay.RotationDir.CounterClockWise);
 
-        animSpeed += isCorrectDir ? 1 : -1;
-        Mathf.Clamp(animSpeed, MIN_ANIM_SPEED, MAX_ANIM_SPEED);
+        animSpeed += isCorrectDir ? SCORE_STEP : -SCORE_STEP;
+        animSpeed = Mathf.Clamp(animSpeed, MIN_ANIM_SPEED, MAX_ANIM_SPEED);
+
+        score += isCorrectDir ? 15f : 0f;
+        UIManager.Instance.UpdateScore(score);
 
         rotateDirDisplay.AssignNewRandomDir();
     }
