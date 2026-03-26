@@ -7,6 +7,7 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private BeatManager beatManager;
     [SerializeField] private ComboText comboText;
     [SerializeField]private Lifes lifesScript;
+    [SerializeField]private CameraShake cameraShake;
     private float animSpeed = 1f;
     private const float MAX_ANIM_SPEED = 5f;
     private const float MIN_ANIM_SPEED = 0f;
@@ -86,6 +87,7 @@ public class PlayerControl : MonoBehaviour
         {
             score -= scoreStep;
             if(score < 0) score = 0;
+            cameraShake.Shake();
             lifesScript.lifes();
             comboText.resetCount();
             animSpeed -= animSpeedStep;
