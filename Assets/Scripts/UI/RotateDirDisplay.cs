@@ -37,8 +37,9 @@ public class RotateDirDisplay : MonoBehaviour
         rotateDirText.color = colors[Random.Range(0, 6)];
     }
 
-    public void ClearDirText()
+    public void ClearDir()
     {
-        rotateDirText.text = "";
+        rotateDirText.text = "Get Ready...";
+        rotateDirText.color = Color.black;
     }
 }

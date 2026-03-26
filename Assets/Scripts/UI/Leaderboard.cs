@@ -10,18 +10,20 @@ public class LeaderBoard : MonoBehaviour
     private List<LeaderboardEntryData> leaderboardEntryDataList = new List<LeaderboardEntryData>();
     private List<Transform> leaderboardEntryTransformList = new List<Transform>();
     public float templateHeight = 30f;
+    private const string LEADERBOARD_STRING = "HipCirclesLeaderboard";
+    
 
 
     private void OnEnable()
     {
         entryTemplate.gameObject.SetActive(false);
-        
-
-        //AddNewEntry("Badri", SessionEndController.currentSession.time.ToString(), SessionEndController.currentSession.accuracy, SessionEndController.currentSession.calories, SessionEndController.currentSession.finalScore);
 
 
+        AddNewEntry("Aman", SessionManager.currentSession.sessionDuration.ToString(), SessionManager.currentSession.accuracy, SessionManager.currentSession.calories, SessionManager.currentSession.finalScore);
 
-        string jsonString = PlayerPrefs.GetString("ZleaderboardEntries");
+
+
+        string jsonString = PlayerPrefs.GetString(LEADERBOARD_STRING);
 
         LeaderboardEntries leaderboard = JsonUtility.FromJson<LeaderboardEntries>(jsonString);
 
@@ -51,7 +53,7 @@ public class LeaderBoard : MonoBehaviour
         LeaderboardEntryData entry = new LeaderboardEntryData { playerName = name, time = time, accuracy = accuracy, calories = calories, score = score };
 
         //load current entries data if not present fill empty string
-        string jsonString = PlayerPrefs.GetString("ZleaderboardEntries", "");
+        string jsonString = PlayerPrefs.GetString(LEADERBOARD_STRING, "");
 
         LeaderboardEntries entries;
         if (jsonString != null && jsonString != "")
@@ -67,7 +69,7 @@ public class LeaderBoard : MonoBehaviour
         //update and save
         entries.leaderboardEntryDataList.Add(entry);
         string json = JsonUtility.ToJson(entries);
-        PlayerPrefs.SetString("ZleaderboardEntries", json);
+        PlayerPrefs.SetString(LEADERBOARD_STRING, json);
         PlayerPrefs.Save();
 
     }
@@ -118,7 +120,7 @@ public class LeaderBoard : MonoBehaviour
 
     public void ClearLeaderboardData()
     {
-        PlayerPrefs.DeleteKey("ZleaderboardEntries");
+        PlayerPrefs.DeleteKey(LEADERBOARD_STRING);
         PlayerPrefs.Save();
         Debug.Log("Leaderboard data cleared");
     }

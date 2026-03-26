@@ -22,9 +22,9 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         if (startButton) startButton.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowDifficultySelection(); });
-        if (beginnerBtn) beginnerBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowHUD(); });
-        if (moderateBtn) moderateBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowHUD(); });
-        if (expertBtn) expertBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowHUD();});
+        if (beginnerBtn) beginnerBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowHUD(); audioManager.StartMusic(); });
+        if (moderateBtn) moderateBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowHUD(); audioManager.StartMusic(); });
+        if (expertBtn) expertBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowHUD(); audioManager.StartMusic(); });
         if (leaderboardNxtBtn) leaderboardNxtBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowAnalyticsStats(); });
         if (analyticsNxtBtn) analyticsNxtBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowAnalyticsGraph(); });
         if (graphNxtBtn) graphNxtBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowAnalyticsStats(); Restart(); });
@@ -34,6 +34,11 @@ public class UIManager : MonoBehaviour
         if (levelCompleteRestartBtn) levelCompleteRestartBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); Restart();});
 
         ShowMenu();
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Escape) && hudPanel.activeSelf) ShowSettings();
     }
 
     public void UpdateScore(float score)

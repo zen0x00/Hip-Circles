@@ -6,39 +6,37 @@ using TMPro;
 public class ShowAnalytics : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI compltetionTime; 
-    [SerializeField] TextMeshProUGUI leftActions; 
-    [SerializeField] TextMeshProUGUI rightActions; 
     [SerializeField] TextMeshProUGUI calories; 
-    [SerializeField] TextMeshProUGUI score;
+    [SerializeField] TextMeshProUGUI CWReps;
+    [SerializeField] TextMeshProUGUI CCWReps; 
+    [SerializeField] TextMeshProUGUI totalRepsCompleted; 
 
-    [SerializeField] TextMeshProUGUI DummyData1;
-    [SerializeField] TextMeshProUGUI DummyData2;
-    [SerializeField] TextMeshProUGUI DummyData3;
-    [SerializeField] TextMeshProUGUI DummyData4;
-    [SerializeField] TextMeshProUGUI DummyData5;
+    [SerializeField] TextMeshProUGUI finalScore;
+    [SerializeField] TextMeshProUGUI accuracy;
+    [SerializeField] TextMeshProUGUI maxBPMReached;
+    [SerializeField] TextMeshProUGUI totalWrongHits;
+    [SerializeField] TextMeshProUGUI longestStreak;
 
 
 
     public void OnEnable()
     {
-        //GameData gameData = SessionEndController.currentSession;
-        GameData gameData = new GameData();
-
+        GameData gameData = SessionManager.currentSession;
 
         if (gameData == null) return;
 
-        compltetionTime.text = gameData.time;
-        leftActions.text = gameData.leftActions.ToString();
-        rightActions.text = gameData.rightActions.ToString();
+        compltetionTime.text = gameData.sessionDuration;
+        CWReps.text = gameData.CW.ToString();
+        CCWReps.text = gameData.CCW.ToString();
         calories.text = gameData.calories.ToString();
-        score.text = gameData.finalScore.ToString();
+        totalRepsCompleted.text = gameData.totalReps.ToString();
 
-        //dummy data
-        DummyData1.text = gameData.dummy1.ToString();
-        DummyData2.text = gameData.dummy2.ToString();
-        DummyData3.text = gameData.dummy3.ToString();
-        DummyData4.text = gameData.dummy4.ToString();
-        DummyData5.text = gameData.dummy5.ToString();
+
+        finalScore.text = gameData.finalScore.ToString();
+        accuracy.text = gameData.accuracy.ToString();
+        maxBPMReached.text = gameData.maxBPMReached.ToString();
+        totalWrongHits.text = gameData.totalWrongHits.ToString();
+        longestStreak.text = gameData.longestStreak.ToString();
     }
 
 

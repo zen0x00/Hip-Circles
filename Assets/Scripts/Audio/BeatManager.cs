@@ -11,7 +11,7 @@ public class BeatManager : MonoBehaviour
     public float minBpm = 15f;
     public float maxBpm = 25f;
 
-    [SerializeField] AudioManager audioSource;
+    [SerializeField] AudioManager audioManager;
     public int currentSoundIndex = 0;
 
 
@@ -34,10 +34,13 @@ public class BeatManager : MonoBehaviour
     public void IncreaseBPM()
     {
         bpm += 1;
-        currentSoundIndex += 1;
         bpm = Mathf.Clamp(bpm, minBpm, maxBpm);
-        secondsPerBeat = 60 / bpm;
-        audioSource.PlayBeatSound(currentSoundIndex);
+        secondsPerBeat = 60f / bpm;
+
+
+        currentSoundIndex += 1;
+        if(currentSoundIndex >= audioManager.beatSounds.Length) currentSoundIndex = 0;
+        audioManager.PlayBeatSound(currentSoundIndex);
     }
 
 
@@ -46,13 +49,14 @@ public class BeatManager : MonoBehaviour
         currentSoundIndex = 0;
         bpm -= 1;
         bpm = Mathf.Clamp(bpm, minBpm, maxBpm);
-        secondsPerBeat = 60 / bpm;
+        secondsPerBeat = 60f / bpm;
+        audioManager.PlayFailSound();
     }
 
     public void UpdatePitch()
     {
         float pitch = bpm / minBpm;
-        audioSource.SetMusicPitch(pitch);
+        audioManager.SetMusicPitch(pitch);
     }
 
 }

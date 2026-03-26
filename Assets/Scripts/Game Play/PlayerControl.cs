@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
@@ -6,20 +7,25 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private RotateDirDisplay rotateDirDisplay;
     [SerializeField] private BeatManager beatManager;
     [SerializeField] private ComboText comboText;
-    [SerializeField]private Lifes lifesScript;
-    [SerializeField]private CameraShake cameraShake;
+    [SerializeField] private Lifes lifesScript;
+    [SerializeField] private CameraShake cameraShake;
     private float animSpeed = 1f;
     private const float MAX_ANIM_SPEED = 5f;
-    private const float MIN_ANIM_SPEED = 0f;
+    private const float MIN_ANIM_SPEED = 1f;
     public float scoreStep = 15f;
-    public float animSpeedStep = 1f;
+    public float animSpeedStep = 0.5f;
     private float score = 0f;
-
+    private bool inputGiven = false;
     public int failCount = 0;
 
     public bool inputWindowOpen = false;
     private float inputWindowTimer = 0f;
     private float inputWindowDur = 2f;
+
+    public static event Action onCorrectCW;
+    public static event Action onCorrectCCW;
+    public static event Action onWrongHit;
+    public static event Action onMiss;
 
 
     private void OnEnable()
@@ -48,6 +54,7 @@ public class PlayerControl : MonoBehaviour
     {
         inputWindowOpen = true;
         inputWindowTimer = inputWindowDur;
+        inputGiven = false;
     }
 
     private void HandleWindow()
@@ -56,9 +63,11 @@ public class PlayerControl : MonoBehaviour
 
         inputWindowTimer -= Time.deltaTime;
 
-        if(inputWindowTimer <= 0f)
+        if (inputWindowTimer <= 0f)
         {
             inputWindowOpen = false;
+            if(!inputGiven) onMiss?.Invoke();
+
         }
     }
 
@@ -69,40 +78,38 @@ public class PlayerControl : MonoBehaviour
         bool isPlayerRotatedCW = Input.GetKeyDown(KeyCode.D);
         bool isPlayerRotatedCCW = Input.GetKeyDown(KeyCode.A);
 
+
         if (!isPlayerRotatedCW && !isPlayerRotatedCCW) return;
 
         bool isCorrectDir = (isPlayerRotatedCW && rotateDirDisplay.currentDir == RotateDirDisplay.RotationDir.ClockWise) ||
             (isPlayerRotatedCCW && rotateDirDisplay.currentDir == RotateDirDisplay.RotationDir.CounterClockWise);
 
+
         if (isCorrectDir)
         {
-            animSpeed += animSpeedStep;
-            comboText.increaseCount();
-            score += scoreStep;
-            beatManager.IncreaseBPM();
-            beatManager.UpdatePitch();
-            rotateDirDisplay.ClearDirText();
+            OnCorrectDir();
+            if (isPlayerRotatedCW)
+                onCorrectCW?.Invoke();
+            else
+                onCorrectCCW?.Invoke();
         }
         else
         {
-            score -= scoreStep;
-            if(score < 0) score = 0;
-            cameraShake.Shake();
-            lifesScript.lifes();
-            comboText.resetCount();
-            animSpeed -= animSpeedStep;
-            failCount += 1;
-            beatManager.DecreaseBPM();
-            beatManager.UpdatePitch();
-            rotateDirDisplay.ClearDirText();
+            OnWrongDir();
+            onWrongHit?.Invoke();
         }
 
 
         animSpeed = Mathf.Clamp(animSpeed, MIN_ANIM_SPEED, MAX_ANIM_SPEED);
         UIManager.Instance.UpdateScore(score);
-        if (failCount >= 3) UIManager.Instance.ShowGameOver();
+        if (failCount >= 3)
+        {
+            SessionManager.Instance.SaveSession(score);
+            UIManager.Instance.ShowGameOver();
+        }
 
         inputWindowOpen = false;
+        inputGiven = true;
 
     }
 
@@ -112,4 +119,27 @@ public class PlayerControl : MonoBehaviour
         playerAnim.speed = animSpeed;
     }
 
+    private void OnCorrectDir()
+    {
+        animSpeed += animSpeedStep;
+        comboText.increaseCount();
+        score += scoreStep;
+        beatManager.IncreaseBPM();
+        beatManager.UpdatePitch();
+        rotateDirDisplay.ClearDir();
+    }
+
+    private void OnWrongDir()
+    {
+        score -= scoreStep;
+        if (score < 0) score = 0;
+        cameraShake.Shake();
+        lifesScript.lifes();
+        comboText.resetCount();
+        animSpeed -= animSpeedStep;
+        failCount += 1;
+        beatManager.DecreaseBPM();
+        beatManager.UpdatePitch();
+        rotateDirDisplay.ClearDir();
+    }
 }

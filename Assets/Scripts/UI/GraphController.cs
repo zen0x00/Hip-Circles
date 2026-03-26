@@ -22,7 +22,7 @@ public class GraphController : MonoBehaviour
     {
         graphCotainer = GetComponent<RectTransform>();
         //List<int> valueList = new List<int>() { 5, 38, 56, 45, 78, 32, 12, 38, 56, 23, 98, 54, 5, 38, 56, 45 };
-        string jsonStrng = PlayerPrefs.GetString("ZleaderboardEntries");
+        string jsonStrng = PlayerPrefs.GetString("HipCirclesLeaderboard");
         LeaderBoard.LeaderboardEntries entries = JsonUtility.FromJson<LeaderBoard.LeaderboardEntries>(jsonStrng);
 
 

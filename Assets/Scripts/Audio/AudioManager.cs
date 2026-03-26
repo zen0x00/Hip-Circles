@@ -4,26 +4,31 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioSource musicSource;
     [SerializeField] private AudioSource sfxSource;
 
 
     [SerializeField]private AudioClip bgMusic;
     [SerializeField]private AudioClip btnClickSound;
-    [SerializeField]private AudioClip[] beatSounds;
+    [SerializeField]public AudioClip[] beatSounds;
+    [SerializeField]private AudioClip failSound;
 
 
 
     private void Start()
     {
-        audioSource.clip = bgMusic;
-        audioSource.loop = true;
-        audioSource.Play();
+        musicSource.clip = bgMusic;
+        musicSource.loop = true;
+    }
+
+    public void StartMusic()
+    {
+        musicSource.Play();
     }
 
     public void PlayButtonClick()
     {
-        audioSource.PlayOneShot(btnClickSound);
+        sfxSource.PlayOneShot(btnClickSound, 5f);
     }
 
     public void PlayBeatSound(int i)
@@ -33,7 +38,12 @@ public class AudioManager : MonoBehaviour
 
     public void SetMusicPitch(float pitch)
     {
-        audioSource.pitch = pitch;
+        musicSource.pitch = pitch;
+    }
+
+    public void PlayFailSound()
+    {
+        sfxSource.PlayOneShot(failSound);
     }
 
 }
