@@ -10,7 +10,8 @@ public class AudioManager : MonoBehaviour
 
     [SerializeField]private AudioClip bgMusic;
     [SerializeField]private AudioClip btnClickSound;
-    [SerializeField]private AudioClip beatSound;
+    [SerializeField]private AudioClip[] beatSounds;
+
 
 
     private void Start()
@@ -25,9 +26,9 @@ public class AudioManager : MonoBehaviour
         audioSource.PlayOneShot(btnClickSound);
     }
 
-    public void PlayBeatSound()
+    public void PlayBeatSound(int i)
     {
-        sfxSource.PlayOneShot(beatSound, 10f);
+        sfxSource.PlayOneShot(beatSounds[i]);
     }
 
     public void SetMusicPitch(float pitch)

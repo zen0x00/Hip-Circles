@@ -30,6 +30,15 @@ public class RotateDirDisplay : MonoBehaviour
 
     public void UpdateDisplay()
     {
+        Color[] colors = { Color.red, Color.green, Color.blue , Color.cyan, Color.magenta, Color.black, Color.white, Color.white};
+
+
         rotateDirText.text = "Rotate " + currentDir;
+        rotateDirText.color = colors[Random.Range(0, 6)];
+    }
+
+    public void ClearDirText()
+    {
+        rotateDirText.text = "";
     }
 }

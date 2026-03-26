@@ -12,6 +12,7 @@ public class BeatManager : MonoBehaviour
     public float maxBpm = 25f;
 
     [SerializeField] AudioManager audioSource;
+    public int currentSoundIndex = 0;
 
 
 
@@ -33,14 +34,16 @@ public class BeatManager : MonoBehaviour
     public void IncreaseBPM()
     {
         bpm += 1;
+        currentSoundIndex += 1;
         bpm = Mathf.Clamp(bpm, minBpm, maxBpm);
         secondsPerBeat = 60 / bpm;
-        audioSource.PlayBeatSound();
+        audioSource.PlayBeatSound(currentSoundIndex);
     }
 
 
     public void DecreaseBPM()
     {
+        currentSoundIndex = 0;
         bpm -= 1;
         bpm = Mathf.Clamp(bpm, minBpm, maxBpm);
         secondsPerBeat = 60 / bpm;

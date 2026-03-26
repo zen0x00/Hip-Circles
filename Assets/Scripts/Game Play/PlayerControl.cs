@@ -16,7 +16,7 @@ public class PlayerControl : MonoBehaviour
 
     public bool inputWindowOpen = false;
     private float inputWindowTimer = 0f;
-    private float inputWindowDur = 0.3f;
+    private float inputWindowDur = 2f;
 
 
     private void OnEnable()
@@ -77,6 +77,7 @@ public class PlayerControl : MonoBehaviour
             score += scoreStep;
             beatManager.IncreaseBPM();
             beatManager.UpdatePitch();
+            rotateDirDisplay.ClearDirText();
         }
         else
         {
@@ -86,6 +87,7 @@ public class PlayerControl : MonoBehaviour
             failCount += 1;
             beatManager.DecreaseBPM();
             beatManager.UpdatePitch();
+            rotateDirDisplay.ClearDirText();
         }
 
 
