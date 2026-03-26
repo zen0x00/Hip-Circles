@@ -4,6 +4,7 @@ public class PlayerControl : MonoBehaviour
 {
     private Animator playerAnim;
     [SerializeField] private RotateDirDisplay rotateDirDisplay;
+    [SerializeField] private BeatManager beatManager;
     private float animSpeed = 1f;
     private const float MAX_ANIM_SPEED = 5f;
     private const float MIN_ANIM_SPEED = 0f;
@@ -13,6 +14,20 @@ public class PlayerControl : MonoBehaviour
 
     public int failCount = 0;
 
+    public bool inputWindowOpen = false;
+    private float inputWindowTimer = 0f;
+    private float inputWindowDur = 0.3f;
+
+
+    private void OnEnable()
+    {
+        BeatManager.OnBeat += OpenWindow;
+    }
+
+    private void OnDisable()
+    {
+        BeatManager.OnBeat -= OpenWindow;
+    }
 
     private void Start()
     {
@@ -23,10 +38,31 @@ public class PlayerControl : MonoBehaviour
     {
         HandleRotationInput();
         ApplyAnimations();
+        HandleWindow();
+    }
+
+    private void OpenWindow()
+    {
+        inputWindowOpen = true;
+        inputWindowTimer = inputWindowDur;
+    }
+
+    private void HandleWindow()
+    {
+        if (!inputWindowOpen) return;
+
+        inputWindowTimer -= Time.deltaTime;
+
+        if(inputWindowTimer <= 0f)
+        {
+            inputWindowOpen = false;
+        }
     }
 
     private void HandleRotationInput()
     {
+        if (!inputWindowOpen) return;
+
         bool isPlayerRotatedCW = Input.GetKeyDown(KeyCode.D);
         bool isPlayerRotatedCCW = Input.GetKeyDown(KeyCode.A);
 
@@ -39,12 +75,17 @@ public class PlayerControl : MonoBehaviour
         {
             animSpeed += animSpeedStep;
             score += scoreStep;
+            beatManager.IncreaseBPM();
+            beatManager.UpdatePitch();
         }
         else
         {
-            animSpeed -= animSpeedStep;
             score -= scoreStep;
+            if(score < 0) score = 0;
+            animSpeed -= animSpeedStep;
             failCount += 1;
+            beatManager.DecreaseBPM();
+            beatManager.UpdatePitch();
         }
 
 
@@ -52,7 +93,8 @@ public class PlayerControl : MonoBehaviour
         UIManager.Instance.UpdateScore(score);
         if (failCount >= 3) UIManager.Instance.ShowGameOver();
 
-        rotateDirDisplay.AssignNewRandomDir();
+        inputWindowOpen = false;
+
     }
 
     private void ApplyAnimations()

@@ -9,9 +9,14 @@ public class RotateDirDisplay : MonoBehaviour
     public enum RotationDir { ClockWise, CounterClockWise};
     public RotationDir currentDir { get; private set; }
 
-    private void Start()
+    private void OnEnable()
     {
-        AssignNewRandomDir();
+        BeatManager.OnBeat += AssignNewRandomDir;
+    }
+
+    private void OnDisable()
+    {
+        BeatManager.OnBeat -= AssignNewRandomDir;
     }
 
     public void AssignNewRandomDir()
