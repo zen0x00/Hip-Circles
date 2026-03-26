@@ -13,6 +13,10 @@ public class AudioManager : MonoBehaviour
     [SerializeField]public AudioClip[] beatSounds;
     [SerializeField]private AudioClip failSound;
 
+    public void PauseMusic() => musicSource.enabled = false;
+    public void ResumeMusic() => musicSource.enabled = true;
+    public void StopMusic() => musicSource.Stop();
+
 
 
     private void Start()

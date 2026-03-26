@@ -56,7 +56,26 @@ public class BeatManager : MonoBehaviour
     public void UpdatePitch()
     {
         float pitch = bpm / minBpm;
+        if (pitch < 0.5f) pitch = 0.5f;
         audioManager.SetMusicPitch(pitch);
     }
 
+
+    public void Pause()
+    {
+        enabled = false;
+        audioManager.PauseMusic();
+    }
+
+    public void Resume()
+    {
+        enabled = true;
+        audioManager.ResumeMusic();
+    }
+
+    public void Stop()
+    {
+        enabled = false;
+        audioManager.StopMusic();
+    }
 }

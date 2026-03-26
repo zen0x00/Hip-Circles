@@ -27,6 +27,9 @@ public class PlayerControl : MonoBehaviour
     public static event Action onWrongHit;
     public static event Action onMiss;
 
+    public bool Pause() => enabled = false;
+    public bool Resume() => enabled = true;
+
 
     private void OnEnable()
     {
@@ -104,13 +107,20 @@ public class PlayerControl : MonoBehaviour
         UIManager.Instance.UpdateScore(score);
         if (failCount >= 3)
         {
-            SessionManager.Instance.SaveSession(score);
-            UIManager.Instance.ShowGameOver();
+            EndSession();
         }
 
         inputWindowOpen = false;
         inputGiven = true;
 
+    }
+
+    private void EndSession()
+    {
+        SessionManager.Instance.SaveSession(score);
+        UIManager.Instance.ShowGameOver();
+        beatManager.Stop();
+        enabled = false;
     }
 
     private void ApplyAnimations()

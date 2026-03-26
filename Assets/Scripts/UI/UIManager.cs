@@ -7,9 +7,11 @@ public class UIManager : MonoBehaviour
 {
 
     [SerializeField] private GameObject menuPanel, diffSelectPanel, hudPanel, pauseMenu, settingsMenu, leaderboard, analyticsPanel, graphPanel, gameOverPanel, levelCompletedPanel;
-    [SerializeField] private Button startButton, beginnerBtn, moderateBtn, expertBtn, leaderboardNxtBtn, analyticsNxtBtn, graphNxtBtn, gameOverNextBtn, gameOverRestartBtn, levelCompleteNxtBtn, levelCompleteRestartBtn;
+    [SerializeField] private Button startButton, beginnerBtn, moderateBtn, expertBtn,pauseBtn, resumeBtn, pauseMenuExitBtn, pauseMenuRestartBtn, settingsBtn, leaderboardNxtBtn, analyticsNxtBtn, graphNxtBtn, gameOverNextBtn, gameOverRestartBtn, levelCompleteNxtBtn, levelCompleteRestartBtn;
     [SerializeField] private AudioManager audioManager;
     [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private BeatManager beatManager;
+    [SerializeField] private PlayerControl playerControl;
 
     public static UIManager Instance { get; private set; }
 
@@ -27,9 +29,13 @@ public class UIManager : MonoBehaviour
         if (expertBtn) expertBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowHUD(); audioManager.StartMusic(); });
         if (leaderboardNxtBtn) leaderboardNxtBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowAnalyticsStats(); });
         if (analyticsNxtBtn) analyticsNxtBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowAnalyticsGraph(); });
-        if (graphNxtBtn) graphNxtBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowAnalyticsStats(); Restart(); });
+        if (graphNxtBtn) graphNxtBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); Restart(); });
         if (gameOverNextBtn) gameOverNextBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowLeaderboard(); });
         if (gameOverRestartBtn) gameOverRestartBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); Restart(); });
+        if (settingsBtn) settingsBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowSettings(); });
+        if (pauseMenuRestartBtn) pauseMenuRestartBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); Restart(); });
+        if (pauseBtn) pauseBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowPause(); beatManager.Pause(); playerControl.Pause();});
+        if (resumeBtn) gameOverRestartBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowHUD(); beatManager.Resume(); playerControl.Resume(); });
         if (levelCompleteNxtBtn) levelCompleteNxtBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); ShowLeaderboard(); });
         if (levelCompleteRestartBtn) levelCompleteRestartBtn.onClick.AddListener(() => { audioManager.PlayButtonClick(); Restart();});
 
